@@ -491,38 +491,4 @@ export const products = [
     priceCents: 1850,
     keywords: ["umbrella", "rain", "accessories"]
   },
-  {
-    id: "f3a91c2e-8d44-4b7a-9e6c-2b0a7d91f6a8",
-    image: "images/products/backpack.jpg",
-    name: "Black Casual Backpack",
-    rating: {
-      stars: 4.5,
-      count: 2204
-    },
-    priceCents: 3600,
-    keywords: [
-      "backpack",
-      "casual",
-      "bags",
-      "accessories",
-      "black"
-    ]
-  },
-  {
-    id: "f3a91c2e-8d44-4b7a-9e6c-2b0a7d91f6a8",
-    image: "images/products/umbrella.jpg",
-    name: "Green Umbrella",
-    rating: {
-      stars: 4.5,
-      count: 350
-    },
-    priceCents: 2400,
-    keywords: [
-      "umbrella",
-      "rain",
-      "daily use",
-      "accessories",
-      "portable"
-    ]
-  },
 ];

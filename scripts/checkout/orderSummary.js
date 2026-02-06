@@ -5,9 +5,10 @@ import {
   updateQuantity,
   updateDeliveryOption,
 } from '../../data/cart.js';
-import { products } from '../../data/products.js';
+import { products, getProduct } from '../../data/products.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
-import {deliveryOptions} from '../../data/deliveryOptions.js'
+import formatCurrency from '../utils/money.js';
+import {deliveryOptions, getDeliveryOption} from '../../data/deliveryOptions.js'
 
 const today = dayjs();
 const deliveryDate = today.add(7, 'days');
@@ -20,37 +21,11 @@ export function renderOrderSummary() {
   cart.forEach((cartItem) => {
       const productId = cartItem.productId;
 
-      let matchingProduct;
-
-      products.forEach((product) => {
-          if (product.id === productId) {
-              matchingProduct = product;
-          }
-      });
-
-      if (!matchingProduct) {
-        return;
-      }
+      const matchingProduct = getProduct(productId);
 
       const deliveryOptionId = cartItem.deliveryOptionId;
 
-      let deliveryOption;
-
-      deliveryOptions.forEach((option) => {
-        if (option.id === deliveryOptionId) {
-          deliveryOption = option;
-        } 
-      });
-
-      if (!deliveryOption) {
-        deliveryOption = deliveryOptions[0];
-      }
-
-      const today = dayjs();
-      const deliveryDate = today.add(
-        deliveryOption.deliveryDays,
-        'days'
-      );
+      const deliveryOption = getDeliveryOption(deliveryOptionId);
 
       const dateString = deliveryDate.format(
         'dddd, MMMM D'
@@ -71,7 +46,7 @@ export function renderOrderSummary() {
                     ${matchingProduct.name}
                   </div>
                   <div class="product-price">
-                    ${(matchingProduct.priceCents / 100).toFixed(2)}
+                    $${formatCurrency(matchingProduct.priceCents)}
                   </div>
                   <div class="product-quantity">
                     <span>
@@ -118,7 +93,7 @@ export function renderOrderSummary() {
         'dddd, MMMM D'
       );
 
-      const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${(deliveryOption.priceCents / 100).toFixed(2)}`;
+      const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${formatCurrency(deliveryOption.priceCents)}`;
 
       const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
 

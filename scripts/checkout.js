@@ -2,7 +2,8 @@ import {
   cart, 
   removeFromCart, 
   calculateCartQuantity, 
-  updateQuantity 
+  updateQuantity,
+  updateDeliveryOption,
 } from '../data/cart.js';
 import { products } from '../data/products.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
@@ -120,7 +121,7 @@ function deliveryOptionsHTML(matchingProduct, cartItem) {
     const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
 
     html += `
-      <div class="delivery-option">
+      <div class="delivery-option js-delivery-option" data-product-id="${matchingProduct.id}" data-delivery-option-id="${deliveryOption.id}">
         <input type="radio"
           ${isChecked ? 'checked' : ''}
           class="delivery-option-input"
@@ -148,7 +149,9 @@ document.querySelectorAll('.js-delete-link').forEach((link) => {
     removeFromCart(productId);
 
     const container = document.querySelector(`.js-cart-item-container-${productId}`);
-    container.remove();
+    if (container) {
+      container.remove();
+    };
 
     updateCartQuantity();
   });
@@ -188,7 +191,6 @@ document.querySelectorAll('.js-save-link')
         return;
       }
 
-      // Update quantity in storage (this will remove the item when quantity === 0)
       updateQuantity(productId, newQuantity);
 
       const container = document.querySelector(
@@ -196,7 +198,6 @@ document.querySelectorAll('.js-save-link')
       );
 
       if (newQuantity === 0) {
-        // Remove the item UI when quantity becomes 0
         if (container) container.remove();
       } else {
         if (container) container.classList.remove('is-editing-quantity');
@@ -208,5 +209,13 @@ document.querySelectorAll('.js-save-link')
       }
 
       updateCartQuantity();
+  });
+});
+
+document.querySelectorAll('.js-delivery-option').forEach((element) => {
+  element.addEventListener('click', () => {
+    const {productId, deliveryOptionId} = element.dataset;
+    updateDeliveryOption(productId, deliveryOptionId);
+    location.reload();
   });
 });

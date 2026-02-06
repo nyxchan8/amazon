@@ -13,8 +13,10 @@ if (!cart) {
 }
 
 export function addToCart(productId, quantity = 1) {
+
     let matchingItem;
-    cart.forEach((cartItem) =>{
+    
+    cart.forEach((cartItem) => {
         if (productId === cartItem.productId) {
             matchingItem = cartItem;
         }

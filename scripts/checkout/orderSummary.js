@@ -6,7 +6,7 @@ import {
   updateDeliveryOption,
 } from '../../data/cart.js';
 import { products, getProduct } from '../../data/products.js';
-import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
 import formatCurrency from '../utils/money.js';
 import {deliveryOptions, getDeliveryOption, calculateDeliveryDate} from '../../data/deliveryOptions.js'
 import { renderPaymentSummary } from './paymentSummary.js';
@@ -106,7 +106,9 @@ export function renderOrderSummary() {
     return html;
   };
 
-  document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
+  const orderSummaryContainer = document.querySelector('.js-order-summary');
+  if (orderSummaryContainer) orderSummaryContainer.innerHTML = cartSummaryHTML;
+  else console.error('.js-order-summary container not found');
 
   document.querySelectorAll('.js-delete-link').forEach((link) => {
     link.addEventListener('click', () => {
@@ -119,10 +121,11 @@ export function renderOrderSummary() {
     });
   });
 
-  function updateCartQuantity() {
+    function updateCartQuantity() {
     const cartQuantity = calculateCartQuantity();
 
-    document.querySelector('.js-return-to-home-link').textContent = `${cartQuantity} items`;
+    const returnToHomeLink = document.querySelector('.js-return-to-home-link');
+    if (returnToHomeLink) returnToHomeLink.textContent = `${cartQuantity} items`;
   }
 
   updateCartQuantity();
@@ -134,7 +137,7 @@ export function renderOrderSummary() {
         const container = document.querySelector(
           `.js-cart-item-container-${productId}`
         );
-        container.classList.add('is-editing-quantity');
+        if (container) container.classList.add('is-editing-quantity');
       });
     });
 
@@ -143,10 +146,10 @@ export function renderOrderSummary() {
     link.addEventListener('click', () => {
       const productId = link.dataset.productId;
 
-      const quantityInput = document.querySelector(
+        const quantityInput = document.querySelector(
           `.js-quantity-input-${productId}`
         );
-        const newQuantity = Number(quantityInput.value);
+        const newQuantity = quantityInput ? Number(quantityInput.value) : 0;
 
         if (newQuantity < 0 || newQuantity >= 1000) {
           alert('Quantity must be at least 0 and less than 1000');

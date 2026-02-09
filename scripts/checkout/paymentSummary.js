@@ -1,4 +1,4 @@
-import {cart} from '../../data/cart.js';
+import {cart, resetCart} from '../../data/cart.js';
 import { getProduct } from '../../data/products.js';
 import { getDeliveryOption } from '../../data/deliveryOptions.js';
 import {formatCurrency} from '../utils/money.js';
@@ -69,11 +69,13 @@ export function renderPaymentSummary() {
         </button>
     `;  
 
-    document.querySelector(".js-payment-summary")
-        .innerHTML = paymentSummaryHTML;
+    const paymentSummaryContainer = document.querySelector('.js-payment-summary');
+    if (paymentSummaryContainer) paymentSummaryContainer.innerHTML = paymentSummaryHTML;
+    else console.error('.js-payment-summary container not found');
 
-    document.querySelector('.js-place-order')
-        .addEventListener('click', async () => {
+    const placeOrderButton = document.querySelector('.js-place-order');
+    if (placeOrderButton) {
+      placeOrderButton.addEventListener('click', async () => {
             try {
                 const response = await fetch('https://supersimplebackend.dev/orders' , {
                     method: 'POST',
@@ -90,7 +92,10 @@ export function renderPaymentSummary() {
             } catch (error) {
                 console.log('Unexpected error. Try again later.');
             }
+
+            resetCart();
             
             window.location.href = 'orders.html';
-        });
+            });
+        }
 } 

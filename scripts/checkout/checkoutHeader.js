@@ -25,6 +25,7 @@ export function renderCheckoutHeader() {
     </div>
   `;
 
-  document.querySelector('.js-checkout-header')
-    .innerHTML = checkoutHeaderHTML;
+  const headerContainer = document.querySelector('.js-checkout-header');
+  if (headerContainer) headerContainer.innerHTML = checkoutHeaderHTML;
+  else console.error('.js-checkout-header not found');
 }

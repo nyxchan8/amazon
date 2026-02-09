@@ -7,7 +7,27 @@ function renderProductsGrid() {
   let productsHTML = "";
   let addedMessageTimeouts = {};
 
-  products.forEach((product) => {
+  const url = new URL(window.location.href);
+  const search = url.searchParams.get('search');
+
+  let filteredProducts = products;
+
+  if (search) {
+    filteredProducts = products.filter((product) => {
+      let matchingKeyword = false;
+
+      product.keywords.forEach((keyword) => {
+        if (keyword.toLowerCase().includes(search.toLowerCase())) {
+          matchingKeyword = true;
+        }
+      });
+
+      return matchingKeyword ||
+        product.name.toLowerCase().includes(search.toLowerCase());
+    });
+  }
+
+  filteredProducts.forEach((product) => {
       productsHTML += `
           <div class="product-container">
             <div class="product-image-container">
@@ -62,24 +82,45 @@ function renderProductsGrid() {
       `;
   });
 
-  document.querySelector(".js-products-grid").innerHTML = productsHTML;
+  const productsGrid = document.querySelector('.js-products-grid');
+  if (productsGrid) productsGrid.innerHTML = productsHTML;
+  else console.error('Products grid (.js-products-grid) not found');
 
-  function updateCartQuantity() {
+    function updateCartQuantity() {
       const cartQuantity = calculateCartQuantity();
 
-      document.querySelector('.js-cart-quantity').textContent = cartQuantity;
-  }
+      const cartQuantityEl = document.querySelector('.js-cart-quantity');
+      if (cartQuantityEl) cartQuantityEl.textContent = cartQuantity;
+    }
 
   updateCartQuantity();
 
-  document.querySelectorAll('.js-add-to-cart').forEach((button) => {
+  const searchButton = document.querySelector('.js-search-button');
+  const searchBar = document.querySelector('.js-search-bar');
+  if (searchButton && searchBar) {
+    searchButton.addEventListener('click', () => {
+      const search = searchBar.value;
+      window.location.href = `amazon.html?search=${search}`;
+    });
+
+    searchBar.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        const searchTerm = searchBar.value;
+        window.location.href = `amazon.html?search=${searchTerm}`;
+      }
+    });
+  }
+
+  const addToCartButtons = document.querySelectorAll('.js-add-to-cart');
+  if (addToCartButtons && addToCartButtons.length) {
+    addToCartButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const productId = button.dataset.productId;
 
         const userSelection = document.querySelector(
           `.js-quantity-selector-${productId}`
         );
-        const selectedNumber = Number(userSelection.value);
+        const selectedNumber = userSelection ? Number(userSelection.value) : 1;
 
         // Update cart via helper so localStorage gets updated
         addToCart(productId, selectedNumber);
@@ -100,5 +141,6 @@ function renderProductsGrid() {
           if (addedMessage) addedMessage.classList.remove('added-to-cart-visible');
         }, 2000);
       });
-  });
+    });
+  }
 }

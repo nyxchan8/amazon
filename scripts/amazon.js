@@ -100,13 +100,13 @@ function renderProductsGrid() {
   if (searchButton && searchBar) {
     searchButton.addEventListener('click', () => {
       const search = searchBar.value;
-      window.location.href = `amazon.html?search=${search}`;
+      window.location.href = `index.html?search=${search}`;
     });
 
     searchBar.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         const searchTerm = searchBar.value;
-        window.location.href = `amazon.html?search=${searchTerm}`;
+        window.location.href = `index.html?search=${searchTerm}`;
       }
     });
   }
